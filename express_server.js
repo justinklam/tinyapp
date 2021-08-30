@@ -49,6 +49,13 @@ app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
 
+// POST ROUTE HANDLER
+
+app.post("/urls", (req, res) => { // when new URL receives new submission
+  console.log(req.body);  // Log the POST request body to the console
+  res.send("Ok");         // Respond with 'Ok'
+});
+
 // PORT LISTENER
 
 app.listen(PORT, () => {
