@@ -1,16 +1,18 @@
 const express = require("express");
 const app = express();
+const bodyParser = require("body-parser");
 
 // PORT
-const PORT = 8080; 
+const PORT = 8080;
 // default port 8080
 
 app.set("view engine", "ejs");
+app.use(bodyParser.urlencoded({extended: true}));
 
 // FEED DATA
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  "9sm5xK": "http://www.google.com",
 };
 
 // GET ROUTE HANDLERS
@@ -28,9 +30,19 @@ app.get("/urls", (req, res) => {
   res.render("urls_index", templateVars);
 });
 
+app.get("/urls/new", (req, res) => {
+  res.render("urls_new");
+});
+
 app.get("/urls/:shortURL", (req, res) => {
-  const templateVars = { shortURL: req.params.shortURL, longURL: req.params.longURL /* What goes here? */ };
+  let shortURL = req.params.shortURL;
+  let longURL = urlDatabase[shortURL];
+  // console.log("shortURL -----", shortURL);
+  // console.log("longURL -----", longURL);
+  // console.log("urlDatabase -----", urlDatabase[shortURL]);
+  const templateVars = { longURL: longURL, shortURL: shortURL };
   res.render("urls_show", templateVars);
+  // passing templateVars into urls_show
 });
 
 app.get("/hello", (req, res) => {
