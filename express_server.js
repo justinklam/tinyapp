@@ -1,13 +1,18 @@
 const express = require("express");
-const app = express();
 const bodyParser = require("body-parser");
 
 // PORT
 const PORT = 8080;
 // default port 8080
 
+// MIDDLEWARE
+const app = express();
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
+
+const generateRandomString = function() {
+  return Math.floor((1 + Math.random()) * 0x100000).toString(16).substring();
+};
 
 // FEED DATA
 const urlDatabase = {
