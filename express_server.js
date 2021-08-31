@@ -33,6 +33,7 @@ app.get("/urls.json", (req, res) => {
 app.get("/urls", (req, res) => {
   const templateVars = { urls: urlDatabase };
   res.render("urls_index", templateVars);
+  // passing templateVars into urls_index
 });
 
 app.get("/urls/new", (req, res) => {
@@ -70,6 +71,14 @@ app.post("/urls", (req, res) => { // when new URL receives new submission
   // add into array with index of shortURL and value of longURL?
   console.log(urlDatabase);  // Log the POST request body to the console
   res.redirect(`/urls/${shortURL}`);
+});
+
+app.post("/urls/:shortURL/delete", (req, res) => {
+  const shortURL = req.params.shortURL;
+  // : <- use req.params to pull out input
+  // console.log ('shortURL delete -----', shortURL)
+  delete urlDatabase[shortURL];
+  res.redirect(`/urls/`)
 });
 
 // PORT LISTENER
