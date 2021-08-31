@@ -40,9 +40,9 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.get("/urls/:shortURL", (req, res) => {
-  let shortURL = req.params.shortURL;
-  let longURL = urlDatabase[shortURL];
+  let shortURL = req.params.shortURL;  
   // console.log("shortURL -----", shortURL);
+  let longURL = urlDatabase[shortURL];
   // console.log("longURL -----", longURL);
   // console.log("urlDatabase -----", urlDatabase[shortURL]);
   const templateVars = { longURL: longURL, shortURL: shortURL };
@@ -54,11 +54,22 @@ app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
 
+app.get("/u/:shortURL", (req, res) => {
+  const shortURL = req.params.shortURL;
+  // whatever is entered into browser
+  const longURL = urlDatabase[shortURL];
+  res.redirect(longURL);
+});
+
 // POST ROUTE HANDLER
 
 app.post("/urls", (req, res) => { // when new URL receives new submission
-  console.log(req.body);  // Log the POST request body to the console
-  res.send("Ok");         // Respond with 'Ok'
+  let shortURL = generateRandomString();
+  let longURL = req.body.longURL;
+  urlDatabase[shortURL] = longURL;
+  // add into array with index of shortURL and value of longURL?
+  console.log(urlDatabase);  // Log the POST request body to the console
+  res.redirect(`/urls/${shortURL}`);
 });
 
 // PORT LISTENER
