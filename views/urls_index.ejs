@@ -24,6 +24,8 @@
           <tr>
             <td><%= url %></td>
             <td><%= urls[url] %></td>
+            <td><form method="POST" action="/urls/<%= url %>/delete"><button class="btn btn-danger">Delete</button></form></td>
+            <!-- form, input field - sends request through method and location. action where it's sending -->
           </tr>
         <% } %>
       </tbody>
