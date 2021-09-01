@@ -28,6 +28,9 @@
             <!-- urlDatabase[shortURL as index] -->
             <td><form method="POST" action="/urls/<%= url %>/delete"><button class="btn btn-danger">Delete</button></form></td>
             <!-- form, input field - sends request through method and location. action where it's sending -->
+            <td><a href="/urls/<%= url %>">Edit</a> </td>
+            <!-- <a> anchor - linking documents, pointing at the shortURL from url index -->
+          </tr>
           </tr>
         <% } %>
       </tbody>
