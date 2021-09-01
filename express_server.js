@@ -1,5 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const cookieParser = require('cookie-parser');
 
 // PORT
 const PORT = 8080;
@@ -78,14 +79,19 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   // : <- use req.params to pull out input
   // console.log ('shortURL delete -----', shortURL)
   delete urlDatabase[shortURL];
-  res.redirect(`/urls/`)
+  res.redirect(`/urls/`);
 });
 
 app.post("/urls/:shortURL/update", (req, res) => {
   const shortURL = req.params.shortURL;
   // whatever we input
   urlDatabase[shortURL] = req.body.newLongURL;
-  res.redirect(`/urls/`)
+  res.redirect(`/urls/`);
+});
+
+app.post("/login", (req, res) => {
+  // set the cookie here then redirect
+  res.redirect(`/urls/`);
 });
 
 // PORT LISTENER
