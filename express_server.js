@@ -32,7 +32,10 @@ app.get("/urls.json", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  const templateVars = { urls: urlDatabase };
+  const templateVars = { 
+    urls: urlDatabase, 
+    // username: req.cookies["username"]
+  };
   res.render("urls_index", templateVars);
   // passing templateVars into urls_index
 });
@@ -91,6 +94,13 @@ app.post("/urls/:shortURL/update", (req, res) => {
 
 app.post("/login", (req, res) => {
   // set the cookie here then redirect
+  res.cookie('userID', req.body.userID);
+  res.redirect(`/urls/`);
+});
+
+app.post("/logout", (req, res) => {
+  res.clearCookie('userID', )
+  // res.clearCookie('name', { path: '/admin' })
   res.redirect(`/urls/`);
 });
 
