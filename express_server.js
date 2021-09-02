@@ -85,7 +85,7 @@ app.get("/u/:shortURL", (req, res) => {
   res.redirect(longURL);
 });
 
-app.get("/registration", (req, res) => {
+app.get("/register", (req, res) => {
   const templateVars = { 
     userID: req.cookies['userID']
   };
@@ -131,7 +131,17 @@ app.post("/logout/", (req, res) => {
   res.redirect(`/urls/`);
 });
 
-app.post("/registration/", (req, res) => {
+// For Registration form data
+app.post("/register/", (req, res) => {
+  let ID = generateRandomString();
+  users[ID] = {
+    id: generateRandomString(),
+    email: req.body.email,
+    password: req.body.password
+    };
+  console.log(users);
+  // res.cookie(users[ID], req.body.users[ID]);
+  // console.log(cookie);
   res.redirect(`/urls/`);
 });
 
