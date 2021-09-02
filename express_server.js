@@ -46,9 +46,12 @@ app.get("/urls.json", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
+  const user_id = req.cookies.user_id;
+  // console.log(`cookies ------`, user_id);
   const templateVars = { 
     urls: urlDatabase, 
-    userID: req.cookies['userID']
+    userID: req.cookies['userID'],
+    user: users[user_id]
   };
   res.render("urls_index", templateVars);
 });
@@ -108,41 +111,43 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   // : <- use req.params to pull out input
   // console.log ('shortURL delete -----', shortURL)
   delete urlDatabase[shortURL];
-  res.redirect(`/urls/`);
+  res.redirect(`/urls`);
 });
 
 app.post("/urls/:shortURL/update", (req, res) => {
   const shortURL = req.params.shortURL;
   // whatever we input
   urlDatabase[shortURL] = req.body.newLongURL;
-  res.redirect(`/urls/`);
+  res.redirect(`/urls`);
 });
 
 app.post("/login/", (req, res) => {
   // set the cookie here then redirect
   res.cookie('userID', req.body.userID);
   // userID from name in form in header
-  res.redirect(`/urls/`);
+  res.redirect(`/urls`);
 });
 
 app.post("/logout/", (req, res) => {
   res.clearCookie('userID', req.body.userID);
   // res.clearCookie('name', { path: '/admin' })
-  res.redirect(`/urls/`);
+  res.redirect(`/urls`);
 });
 
 // For Registration form data
 app.post("/register/", (req, res) => {
+  if (!req.body.email) {
+    res.status(400).send(`Status 400`)
+  };
   let ID = generateRandomString();
   users[ID] = {
-    id: generateRandomString(),
+    id: ID,
     email: req.body.email,
     password: req.body.password
     };
-  console.log(users);
-  // res.cookie(users[ID], req.body.users[ID]);
-  // console.log(cookie);
-  res.redirect(`/urls/`);
+  console.log('users ------', users);
+  res.cookie('user_id', ID);
+  res.redirect(`/urls`);
 });
 
 // PORT LISTENER

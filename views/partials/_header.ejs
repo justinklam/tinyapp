@@ -23,7 +23,7 @@
       <% } else { %>
         <form class="form-inline justify-content-right" action="/logout" method="POST">
           <label for="userID" style="margin-right: 10px;">
-            Logged in as: <%= userID %>
+            Logged in as: <%= user.email %>
           </label>
           <button type="submit" class="btn btn-outline-dark">Logout</button>
         </form>
