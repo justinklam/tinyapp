@@ -17,10 +17,15 @@
         <tr>
           <th scope="col">Short URL</th>
           <th scope="col">Long URL</th>
+          <th scope="col">Edit</th>
+          <th scope="col">Delete</th>
         </tr>
       </thead>
       <tbody>
         <% for(let url in urls) { %>
+          <!-- <a href='urls/<%=url %>'
+            <%= url %>
+          </a> -->
           <tr>
             <td><%= url %></td>
             <!-- references shortURL that's being passed from the templateVars urlDatabase -->
