@@ -72,6 +72,13 @@ app.get("/u/:shortURL", (req, res) => {
   res.redirect(longURL);
 });
 
+app.get("/registration", (req, res) => {
+  const templateVars = { 
+    userID: req.cookies['userID']
+  };
+  res.render("registration", templateVars);
+});
+
 // POST ROUTE HANDLER
 
 app.post("/urls", (req, res) => { // when new URL receives new submission
@@ -111,18 +118,12 @@ app.post("/logout/", (req, res) => {
   res.redirect(`/urls/`);
 });
 
+app.post("/registration/", (req, res) => {
+
+});
+
 // PORT LISTENER
 
 app.listen(PORT, () => {
   console.log(`TinyApp listening on port ${PORT}!`);
 });
-
-// {/* <form method="post" action="/login/"  class="form-check-inline">
-// <!-- <label for="UsernameID">Username: </label> -->
-// <% if(userID) { %>
-//   <input type="submit" value="Logout">
-// <% else { %>
-// <input id="UsernameID" type="text" name="userID" value="Username">
-// <input type="submit" value="Login">
-// <% } }%>
-// </form> */}
