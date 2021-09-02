@@ -1,5 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const cookieParser = require('cookie-parser');
 
 // PORT
 const PORT = 8080;
@@ -9,6 +10,7 @@ const PORT = 8080;
 const app = express();
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(cookieParser());
 
 const generateRandomString = function() {
   return Math.floor((1 + Math.random()) * 0x100000).toString(16).substring();
@@ -31,13 +33,18 @@ app.get("/urls.json", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  const templateVars = { urls: urlDatabase };
+  const templateVars = { 
+    urls: urlDatabase, 
+    userID: req.cookies['userID']
+  };
   res.render("urls_index", templateVars);
-  // passing templateVars into urls_index
 });
 
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+  const templateVars = {
+    userID: req.cookies['userID']
+  };
+  res.render("urls_new", templateVars);
 });
 
 app.get("/urls/:shortURL", (req, res) => {
@@ -46,9 +53,12 @@ app.get("/urls/:shortURL", (req, res) => {
   let longURL = urlDatabase[shortURL];
   // console.log("longURL -----", longURL);
   // console.log("urlDatabase -----", urlDatabase[shortURL]);
-  const templateVars = { longURL: longURL, shortURL: shortURL };
+  const templateVars = { 
+    longURL: longURL, 
+    shortURL: shortURL,
+    userID: req.cookies['userID']
+   };
   res.render("urls_show", templateVars);
-  // passing templateVars into urls_show
 });
 
 app.get("/hello", (req, res) => {
@@ -78,14 +88,27 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   // : <- use req.params to pull out input
   // console.log ('shortURL delete -----', shortURL)
   delete urlDatabase[shortURL];
-  res.redirect(`/urls/`)
+  res.redirect(`/urls/`);
 });
 
 app.post("/urls/:shortURL/update", (req, res) => {
   const shortURL = req.params.shortURL;
   // whatever we input
   urlDatabase[shortURL] = req.body.newLongURL;
-  res.redirect(`/urls/`)
+  res.redirect(`/urls/`);
+});
+
+app.post("/login/", (req, res) => {
+  // set the cookie here then redirect
+  res.cookie('userID', req.body.userID);
+  // userID from name in form in header
+  res.redirect(`/urls/`);
+});
+
+app.post("/logout/", (req, res) => {
+  res.clearCookie('userID', req.body.userID);
+  // res.clearCookie('name', { path: '/admin' })
+  res.redirect(`/urls/`);
 });
 
 // PORT LISTENER
