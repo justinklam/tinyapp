@@ -10,6 +10,7 @@ const PORT = 8080;
 const app = express();
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(cookieParser());
 
 const generateRandomString = function() {
   return Math.floor((1 + Math.random()) * 0x100000).toString(16).substring();
@@ -34,14 +35,16 @@ app.get("/urls.json", (req, res) => {
 app.get("/urls", (req, res) => {
   const templateVars = { 
     urls: urlDatabase, 
-    // username: req.cookies["username"]
+    userID: req.cookies['userID']
   };
   res.render("urls_index", templateVars);
-  // passing templateVars into urls_index
 });
 
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+  const templateVars = {
+    userID: req.cookies['userID']
+  };
+  res.render("urls_new", templateVars);
 });
 
 app.get("/urls/:shortURL", (req, res) => {
@@ -50,9 +53,12 @@ app.get("/urls/:shortURL", (req, res) => {
   let longURL = urlDatabase[shortURL];
   // console.log("longURL -----", longURL);
   // console.log("urlDatabase -----", urlDatabase[shortURL]);
-  const templateVars = { longURL: longURL, shortURL: shortURL };
+  const templateVars = { 
+    longURL: longURL, 
+    shortURL: shortURL,
+    userID: req.cookies['userID']
+   };
   res.render("urls_show", templateVars);
-  // passing templateVars into urls_show
 });
 
 app.get("/hello", (req, res) => {
@@ -92,14 +98,15 @@ app.post("/urls/:shortURL/update", (req, res) => {
   res.redirect(`/urls/`);
 });
 
-app.post("/login", (req, res) => {
+app.post("/login/", (req, res) => {
   // set the cookie here then redirect
   res.cookie('userID', req.body.userID);
+  // userID from name in form in header
   res.redirect(`/urls/`);
 });
 
-app.post("/logout", (req, res) => {
-  res.clearCookie('userID', )
+app.post("/logout/", (req, res) => {
+  res.clearCookie('userID', req.body.userID);
   // res.clearCookie('name', { path: '/admin' })
   res.redirect(`/urls/`);
 });
@@ -109,3 +116,13 @@ app.post("/logout", (req, res) => {
 app.listen(PORT, () => {
   console.log(`TinyApp listening on port ${PORT}!`);
 });
+
+// {/* <form method="post" action="/login/"  class="form-check-inline">
+// <!-- <label for="UsernameID">Username: </label> -->
+// <% if(userID) { %>
+//   <input type="submit" value="Logout">
+// <% else { %>
+// <input id="UsernameID" type="text" name="userID" value="Username">
+// <input type="submit" value="Login">
+// <% } }%>
+// </form> */}
