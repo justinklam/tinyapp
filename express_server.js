@@ -95,6 +95,13 @@ app.get("/register", (req, res) => {
   res.render("registration", templateVars);
 });
 
+app.get("/login", (req, res) => {
+  const templateVars = { 
+    userID: req.cookies['userID']
+  };
+  res.render("login", templateVars);
+});
+
 // POST ROUTE HANDLER
 
 app.post("/urls", (req, res) => { // when new URL receives new submission
@@ -136,16 +143,26 @@ app.post("/logout/", (req, res) => {
 
 // For Registration form data
 app.post("/register/", (req, res) => {
-  if (!req.body.email) {
-    res.status(400).send(`Status 400`)
+
+  let email = req.body.email;
+
+  if (!req.body.email || !req.body.password) {
+    return res.status(400).send(`Status 400: Bad Request. A field is empty`)
   };
+
+  for (const user in users) {
+    if (users[user].email === email) {
+    return res.status(400).send(`Status 400: Account already exists`)
+    }
+  };
+
   let ID = generateRandomString();
   users[ID] = {
     id: ID,
     email: req.body.email,
     password: req.body.password
     };
-  console.log('users ------', users);
+  // console.log('users ------', users);
   res.cookie('user_id', ID);
   res.redirect(`/urls`);
 });
