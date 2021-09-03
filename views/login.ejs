@@ -9,16 +9,17 @@
   <%- include('partials/_header') %>
   <div class="card-header"></div>
   <main style="margin: 1em;">
-    <h3>Login with a New User</h3>
+    <h3>Login with an Existing Account</h3>
   <% if (!userID) { %>
     <form class="form-inline position-absolute-right" action="/login" method="POST">
-      <!-- <label for="userID">
-        <%= userID %>
-      </label> -->
-      <input class="form-control" type="text" name="userID" placeholder="Username"
-        style="width: 225px; margin-right: 10px;">
+      <input class="form-control" type="text" name="email" placeholder="E-Mail"
+        style="width: 225px; margin-right: 10px;"/>
+      
+      <input class="form-control" type="text" name="password" placeholder="Password"
+      style="width: 225px; margin-right: 10px;"/>
       <button type="submit" class="btn btn-outline-dark">Login</button>
     </form>
+    
     <% } else { %>
       <form class="form-inline justify-content-right" action="/logout" method="POST">
         <label for="userID" style="margin-right: 10px;">

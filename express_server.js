@@ -1,6 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const cookieParser = require('cookie-parser');
+const cookieParser = require("cookie-parser");
 
 // PORT
 const PORT = 8080;
@@ -9,11 +9,13 @@ const PORT = 8080;
 // MIDDLEWARE
 const app = express();
 app.set("view engine", "ejs");
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-const generateRandomString = function() {
-  return Math.floor((1 + Math.random()) * 0x100000).toString(16).substring();
+const generateRandomString = function () {
+  return Math.floor((1 + Math.random()) * 0x100000)
+    .toString(16)
+    .substring();
 };
 
 // FEED DATA
@@ -22,18 +24,18 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com",
 };
 
-const users = { 
-  "userRandomID": {
-    id: "userRandomID", 
-    email: "user@example.com", 
-    password: "purple-monkey-dinosaur"
+const users = {
+  userRandomID: {
+    id: "userRandomID",
+    email: "user@example.com",
+    password: "purple-monkey-dinosaur",
   },
- "user2RandomID": {
-    id: "user2RandomID", 
-    email: "user2@example.com", 
-    password: "dishwasher-funk"
-  }
-}
+  user2RandomID: {
+    id: "user2RandomID",
+    email: "user2@example.com",
+    password: "dishwasher-funk",
+  },
+};
 
 // GET ROUTE HANDLERS
 
@@ -46,34 +48,34 @@ app.get("/urls.json", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  const user_id = req.cookies.user_id;
+  // const user_id = req.cookies['userID'];
   // console.log(`cookies ------`, user_id);
-  const templateVars = { 
-    urls: urlDatabase, 
-    userID: req.cookies['userID'],
-    user: users[user_id]
+  const templateVars = {
+    urls: urlDatabase,
+    // userID: req.cookies["userID"],
+    // user: users[user_id],
   };
   res.render("urls_index", templateVars);
 });
 
 app.get("/urls/new", (req, res) => {
   const templateVars = {
-    userID: req.cookies['userID']
+    userID: req.cookies["userID"],
   };
   res.render("urls_new", templateVars);
 });
 
 app.get("/urls/:shortURL", (req, res) => {
-  let shortURL = req.params.shortURL;  
+  let shortURL = req.params.shortURL;
   // console.log("shortURL -----", shortURL);
   let longURL = urlDatabase[shortURL];
   // console.log("longURL -----", longURL);
   // console.log("urlDatabase -----", urlDatabase[shortURL]);
-  const templateVars = { 
-    longURL: longURL, 
+  const templateVars = {
+    longURL: longURL,
     shortURL: shortURL,
-    userID: req.cookies['userID']
-   };
+    userID: req.cookies["userID"],
+  };
   res.render("urls_show", templateVars);
 });
 
@@ -89,27 +91,29 @@ app.get("/u/:shortURL", (req, res) => {
 });
 
 app.get("/register", (req, res) => {
-  const templateVars = { 
-    userID: req.cookies['userID']
+  const templateVars = {
+    userID: req.cookies["userID"],
   };
   res.render("registration", templateVars);
 });
 
 app.get("/login", (req, res) => {
-  const templateVars = { 
-    userID: req.cookies['userID']
+  // const userID = req.cookies["userID"];
+  const templateVars = {
+    userID: null,
   };
   res.render("login", templateVars);
 });
 
 // POST ROUTE HANDLER
 
-app.post("/urls", (req, res) => { // when new URL receives new submission
+app.post("/urls", (req, res) => {
+  // when new URL receives new submission
   let shortURL = generateRandomString();
   let longURL = req.body.longURL;
   urlDatabase[shortURL] = longURL;
   // add into array with index of shortURL and value of longURL?
-  console.log(urlDatabase);  // Log the POST request body to the console
+  // console.log(urlDatabase);  // Log the POST request body to the console
   res.redirect(`/urls/${shortURL}`);
 });
 
@@ -129,41 +133,53 @@ app.post("/urls/:shortURL/update", (req, res) => {
 });
 
 app.post("/login/", (req, res) => {
-  // set the cookie here then redirect
-  res.cookie('userID', req.body.userID);
-  // userID from name in form in header
-  res.redirect(`/urls`);
+  let email = req.body.email;
+  let password = req.body.password;
+
+  for (const user in users) {
+    // console.log(`user -----`, user);
+    // console.log("users ------1", users[user].email);
+    // console.log(`email----- `, email);
+    if (users[user].email !== email) {
+      console.log("users ------2", users[user]);
+      return res.status(403).send(`Status 403: Account does not exist`);
+    }
+    // console.log("users ------", users[user]);
+    if (users[user].password === password) {
+      res.cookie("userID", users[user].id);
+      return res.redirect(`/urls`);
+    }
+    return res.status(403).send(`Status 403: Password is Incorrect`);
+  }
 });
 
 app.post("/logout/", (req, res) => {
-  res.clearCookie('userID', req.body.userID);
-  // res.clearCookie('name', { path: '/admin' })
+  res.clearCookie("userID", req.body.userID);
   res.redirect(`/urls`);
 });
 
 // For Registration form data
 app.post("/register/", (req, res) => {
-
   let email = req.body.email;
 
   if (!req.body.email || !req.body.password) {
-    return res.status(400).send(`Status 400: Bad Request. A field is empty`)
-  };
+    return res.status(400).send(`Status 400: Bad Request. A field is empty`);
+  }
 
   for (const user in users) {
     if (users[user].email === email) {
-    return res.status(400).send(`Status 400: Account already exists`)
+      return res.status(400).send(`Status 400: Account already exists`);
     }
-  };
+  }
 
   let ID = generateRandomString();
   users[ID] = {
     id: ID,
     email: req.body.email,
-    password: req.body.password
-    };
+    password: req.body.password,
+  };
   // console.log('users ------', users);
-  res.cookie('user_id', ID);
+  res.cookie("userID", ID);
   res.redirect(`/urls`);
 });
 
