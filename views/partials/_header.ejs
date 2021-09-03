@@ -13,8 +13,17 @@
       </div>
     </div>
     <ul class="nav navbar-nav navbar-right">
+      <% if (!userID) { %>
       <li><a class="nav-item nav-link" href="/register"><strong>Sign Up</strong></a></li>
       <li><a class="nav-item nav-link" href="/login"><strong>Login</strong></a></li>
+      <% } else { %>
+      <form class="form-inline justify-content-right" action="/logout" method="POST" name="userID">
+        <label for="userID" style="margin-right: 10px;">
+          Logged in as: <%= user.email %>
+        </label>
+        <button class="btn btn-outline-dark" type="submit">Logout</button>
+      </form>
+      <% } %>
     </ul>
   </nav>
 </header>

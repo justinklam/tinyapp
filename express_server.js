@@ -48,12 +48,10 @@ app.get("/urls.json", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  // const user_id = req.cookies['userID'];
-  // console.log(`cookies ------`, user_id);
   const templateVars = {
     urls: urlDatabase,
-    // userID: req.cookies["userID"],
-    // user: users[user_id],
+    userID: req.cookies["userID"],
+    user: users[req.cookies["userID"]]
   };
   res.render("urls_index", templateVars);
 });
@@ -61,6 +59,7 @@ app.get("/urls", (req, res) => {
 app.get("/urls/new", (req, res) => {
   const templateVars = {
     userID: req.cookies["userID"],
+    user: users[req.cookies["userID"]]
   };
   res.render("urls_new", templateVars);
 });
@@ -75,6 +74,7 @@ app.get("/urls/:shortURL", (req, res) => {
     longURL: longURL,
     shortURL: shortURL,
     userID: req.cookies["userID"],
+    user: users[req.cookies["userID"]]
   };
   res.render("urls_show", templateVars);
 });
@@ -93,6 +93,7 @@ app.get("/u/:shortURL", (req, res) => {
 app.get("/register", (req, res) => {
   const templateVars = {
     userID: req.cookies["userID"],
+    user: users[req.cookies["userID"]]
   };
   res.render("registration", templateVars);
 });
@@ -101,6 +102,7 @@ app.get("/login", (req, res) => {
   // const userID = req.cookies["userID"];
   const templateVars = {
     userID: null,
+    user: users[req.cookies["userID"]]
   };
   res.render("login", templateVars);
 });
@@ -132,7 +134,7 @@ app.post("/urls/:shortURL/update", (req, res) => {
   res.redirect(`/urls`);
 });
 
-app.post("/login/", (req, res) => {
+app.post("/login", (req, res) => {
   let email = req.body.email;
   let password = req.body.password;
 
@@ -141,7 +143,7 @@ app.post("/login/", (req, res) => {
     // console.log("users ------1", users[user].email);
     // console.log(`email----- `, email);
     if (users[user].email !== email) {
-      console.log("users ------2", users[user]);
+      // console.log("users ------2", users[user]);
       return res.status(403).send(`Status 403: Account does not exist`);
     }
     // console.log("users ------", users[user]);
@@ -153,8 +155,8 @@ app.post("/login/", (req, res) => {
   }
 });
 
-app.post("/logout/", (req, res) => {
-  res.clearCookie("userID", req.body.userID);
+app.post("/logout", (req, res) => {
+  res.clearCookie("userID", users[req.cookies.userID]);
   res.redirect(`/urls`);
 });
 
