@@ -8,25 +8,9 @@
       <div class="navbar-nav">
         <a class="nav-item nav-link" href="/urls">My URLs</a>
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
+        <a class="nav-item nav-link" href="/register">Create A New User</a>
+        <a class="nav-item nav-link" href="/login">Login With An Existing Account</a>
       </div>
     </div>
-
-    <% if (!userID) { %>
-      <form class="form-inline position-absolute-right " action="/login" method="POST">
-        <!-- <label for="userID">
-          <%= userID %>
-        </label> -->
-        <input class="form-control" type="text" name="userID" placeholder="Username"
-          style="width: 225px; margin-right: 10px;">
-        <button type="submit" class="btn btn-outline-dark">Login</button>
-      </form>
-      <% } else { %>
-        <form class="form-inline justify-content-right" action="/logout" method="POST">
-          <label for="userID" style="margin-right: 10px;">
-            Logged in as: <%= user.email %>
-          </label>
-          <button type="submit" class="btn btn-outline-dark">Logout</button>
-        </form>
-        <% } %>
   </nav>
 </header>
