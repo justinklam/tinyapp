@@ -30,8 +30,7 @@
           </a> -->
           <tr>
             <td><%= url %></td>
-            <!-- references shortURL that's being passed from the templateVars urlDatabase -->
-            <td><%= urls[url] %></td>
+            <td><%= urls[url].longURL %></td>
             <!-- urlDatabase[shortURL as index] -->
             <td><form method="POST" action="/urls/<%= url %>/delete"><button class="btn btn-danger">Delete</button></form></td>
             <!-- form, input field - sends request through method and location. action where it's sending -->
