@@ -7,27 +7,24 @@
 </head>
 <body>
   <%- include('partials/_header') %>
-  <div class="card-header"></div>
+  
+<div class="card-header"></div>
   <main style="margin: 1em;">
-    <h3>Login with an Existing Account</h3>
-  <% if (!userID) { %>
-    <form class="form-inline position-absolute-right" action="/login" method="POST">
-      <input class="form-control" type="text" name="email" placeholder="E-Mail"
-        style="width: 225px; margin-right: 10px;"/>
+    <h3><strong>Login</strong></h3>
+    <form action="/login" method="POST">
+      <div class="form-group mb-2">
+      <label for="email">Email:</label>
+      <input class="form-control" type="email" name="email" placeholder="Enter Email"
+        style="width: 300px; margin-bottom: 2em;"/>
+     </div>
       
-      <input class="form-control" type="text" name="password" placeholder="Password"
-      style="width: 225px; margin-right: 10px;"/>
-      <button type="submit" class="btn btn-outline-dark">Login</button>
+     <div class="form-group mb-2">
+      <label for="password">Password:</label>
+      <input class="form-control" type="password" name="password" placeholder="Enter Password"
+      style="width: 300px; margin-bottom: 2em;"/>
+      <button type="submit" class="btn btn-primary">Login</button>
+     </div>
     </form>
-    
-    <% } else { %>
-      <form class="form-inline justify-content-right" action="/logout" method="POST">
-        <label for="userID" style="margin-right: 10px;">
-          Logged in as: <%= user.email %>
-        </label>
-        <button type="submit" class="btn btn-outline-dark">Logout</button>
-      </form>
-      <% } %>
 
     <!-- Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

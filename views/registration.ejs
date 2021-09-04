@@ -7,22 +7,25 @@
 </head>
 <body>
   <%- include('partials/_header') %>
+  
+  <div class="card-header"></div>
   <main style="margin: 1em;">
-    <h3>Create A New User</h3>
-    <form class="form-inline" method="POST" action="/register"> 
+    <h3><strong>Create A New User</strong></h3>
+    <form method="POST" action="/register"> 
       <div class="form-group mb-2">
       <label for ="email">Email:</label>
-      <input class="form-control" type="email" input name="email" placeholder="Enter Email Here"
-      style="width: 300px; margin: 1em">
+      <input class="form-control" type="email" input name="email" placeholder="Enter Email"
+      style="width: 300px; margin-bottom: 2em">
       </div>
-    <class="form-inline" method="POST" action="/register"> 
+
     <div class="form-group mb-2">
       <label for ="email">Password:</label>
-      <input class="form-control" type="password" input name="password" placeholder="Enter Password Here"
-      style="width: 300px; margin: 1em">
-      <button type="submit" class=" btn btn-primary">Submit</button>
+      <input class="form-control" type="password" input name="password" placeholder="Enter Password"
+      style="width: 300px; margin-bottom: 2em">
+      <button type="submit" class="btn btn-primary">Submit</button>
       </div>
     </form>
+    
   </main>
   <!-- Bootstrap JS -->
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

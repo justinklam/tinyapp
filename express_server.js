@@ -28,7 +28,7 @@ const users = {
   userRandomID: {
     id: "userRandomID",
     email: "user@example.com",
-    password: "purple-monkey-dinosaur",
+    password: "123",
   },
   user2RandomID: {
     id: "user2RandomID",
@@ -134,6 +134,7 @@ app.post("/urls/:shortURL/update", (req, res) => {
   res.redirect(`/urls`);
 });
 
+// Login Handler
 app.post("/login", (req, res) => {
   let email = req.body.email;
   let password = req.body.password;
