@@ -1,6 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
+const { response } = require("express");
 
 // PORT
 const PORT = 8080;
@@ -18,10 +19,21 @@ const generateRandomString = function () {
     .substring();
 };
 
+const urlsForUser = function (userID) {
+  const filterURLS = {};
+  for (const url in urlDatabase) {
+    if (urlDatabase[url].userID === userID) {
+      filterURLS[url] = urlDatabase[url];
+    }
+  }
+  return filterURLS;
+};
+
+
 // FEED DATA
 const urlDatabase = {
-  b6UTxQ: { longURL: "https://www.tsn.ca", userID: "aJ48lW" },
-  i3BoGr: { longURL: "https://www.google.ca", userID: "aJ48lW" }
+  b6UTxQ: { longURL: "https://www.tsn.ca", userID: "userRandomID" },
+  i3BoGr: { longURL: "https://www.google.ca", userID: "user2RandomID" }
 };
 
 const users = {
@@ -47,9 +59,18 @@ app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
+app.get("/users.json", (req, res) => {
+  res.json(users);
+});
+
 app.get("/urls", (req, res) => {
+  if (!req.cookies["userID"]) {
+    // return res.send("<html><body>Please login to access this feature!</body></html>\n");
+    // return res.redirect("/login")
+  }
+  
   const templateVars = {
-    urls: urlDatabase,
+    urls: urlsForUser(req.cookies["userID"]),
     userID: req.cookies["userID"],
     user: users[req.cookies["userID"]],
   };
@@ -58,7 +79,7 @@ app.get("/urls", (req, res) => {
 
 app.get("/urls/new", (req, res) => {
   if (!req.cookies["userID"]) {
-    res.redirect("/login");
+    return res.redirect("/login");
   }
   const templateVars = {
     userID: req.cookies["userID"],
@@ -70,6 +91,10 @@ app.get("/urls/new", (req, res) => {
 app.get("/urls/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
   const longURL = urlDatabase[shortURL].longURL;
+
+  if (req.cookies["userID"] !== urlDatabase[shortURL].userID) {
+    return res.send(`You cannot edit this URL`)
+  }
 
   const templateVars = {
     longURL: longURL,
@@ -128,16 +153,25 @@ app.post("/urls", (req, res) => {
 
 app.post("/urls/:shortURL/delete", (req, res) => {
   const shortURL = req.params.shortURL;
-  // : <- use req.params to pull out input
-  delete urlDatabase[shortURL];
-  res.redirect(`/urls`);
+    // : <- use req.params to pull out input
+
+  if (req.cookies["userID"] === urlDatabase[shortURL].userID) {
+    delete urlDatabase[shortURL];
+    res.redirect(`/urls`)
+  // } else {
+  //   res.send('You are not authorized to delete this. Please login!')
+  }
+  return res.send(`You cannot delete this URL`);
 });
 
 app.post("/urls/:shortURL/update", (req, res) => {
   const shortURL = req.params.shortURL;
-  // whatever we input
-  urlDatabase[shortURL] = req.body.newLongURL;
-  res.redirect(`/urls`);
+    // : <- use req.params to pull out input
+  if (req.cookies["userID"] !== urlDatabase[shortURL].userID) {
+    return res.send(`You cannot edit this URL`)
+  }
+  urlDatabase[shortURL].longURL = req.body.newLongURL;
+  return res.redirect(`/urls`);
 });
 
 // Login Handler

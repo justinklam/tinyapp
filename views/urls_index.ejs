@@ -24,24 +24,37 @@
         </tr>
       </thead>
       <tbody>
+
+        <% if(Object.keys(urls).length===0 && !user) { %>
+          <div class="alert alert-info">
+            <strong>Error!</strong> Please Register/Login and create URLs in order to see them below!
+          </div>
+          <% } %>
+
+        <% if(Object.keys(urls).length===0 && user) { %>
+          <div class="alert alert-info">
+            <strong>Error!</strong> Please create URLs in order to see them below!
+          </div>
+          <% } %>
+
         <% for(let url in urls) { %>
-          <!-- <a href='urls/<%=url %>'
-            <%= url %>
-          </a> -->
           <tr>
             <td><%= url %></td>
             <td><%= urls[url].longURL %></td>
-            <!-- urlDatabase[shortURL as index] -->
-            <td><form method="POST" action="/urls/<%= url %>/delete"><button class="btn btn-danger">Delete</button></form></td>
+            <!-- <td><a href="/urls/<%= url %>">Edit</a></td> -->
+
+            <td><form method="GET" action="/urls/<%= url %>"><button class="btn btn-info">Edit</button></form></td>
+            <td><form method="POST" action="/urls/<%= url %>/delete"><button class="btn btn-info">Delete</button></form></td>
             <!-- form, input field - sends request through method and location. action where it's sending -->
-            <td><a href="/urls/<%= url %>">Edit</a> </td>
             <!-- <a> anchor - linking documents, pointing at the shortURL from url index -->
           </tr>
           </tr>
         <% } %>
+
       </tbody>
     </table>
   </main>
+
   <!-- Bootstrap JS -->
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
