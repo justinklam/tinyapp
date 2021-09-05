@@ -1,7 +1,8 @@
-const express = require("express");
-const bodyParser = require("body-parser");
+const express = require('express');
+const bodyParser = require('body-parser');
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
+const { generateRandomString, getUserByEmail, urlsForUser } = require('./helper');
 
 // PORT
 const PORT = 8080;
@@ -16,19 +17,9 @@ app.use(cookieSession({
   keys: ['key1', 'key2']
 }));
 
-const generateRandomString = function() {
-  return Math.floor((1 + Math.random()) * 0x100000).toString(16).substring();
-};
-
-const urlsForUser = function(userID) {
-  const filterURLS = {};
-  for (const url in urlDatabase) {
-    if (urlDatabase[url].userID === userID) {
-      filterURLS[url] = urlDatabase[url];
-    }
-  }
-  return filterURLS;
-};
+// const generateRandomString = function() {
+//   return Math.floor((1 + Math.random()) * 0x100000).toString(16).substring();
+// };
 
 // FEED DATA
 const urlDatabase = {
@@ -54,7 +45,7 @@ const users = {
 // GET ROUTE HANDLERS
 
 app.get("/", (req, res) => {
-  res.send("Hello!");
+  res.redirect(`/urls`);
 });
 
 app.get("/urls.json", (req, res) => {
@@ -66,13 +57,8 @@ app.get("/users.json", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  // if (!req.cookies["userID"]) {
-  //   return res.send("<html><body>Please login to access this feature!</body></html>\n");
-  //   return res.redirect("/login")
-  // }
-  
   const templateVars = {
-    urls: urlsForUser(req.session.userID),
+    urls: urlsForUser(req.session.userID, urlDatabase),
     userID: req.session.userID,
     user: users[req.session.userID],
   };
@@ -147,16 +133,6 @@ app.get("/login", (req, res) => {
   res.render("login", templateVars);
 });
 
-// app.get("/error", (req, res) => {
-//   const error = req.params.error;
-
-//   const templateVars = {
-//     user: users[req.cookies["userID"]],
-//     error: error
-//   };
-//   res.render("error", templateVars);
-// });
-
 // POST ROUTE HANDLER
 
 app.post("/urls", (req, res) => {
@@ -182,8 +158,6 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   if (req.session.userID === urlDatabase[shortURL].userID) {
     delete urlDatabase[shortURL];
     res.redirect(`/urls`);
-  // } else {
-  //   res.send('You are not authorized to delete this. Please login!')
   }
 
   const templateVars = {
@@ -191,7 +165,6 @@ app.post("/urls/:shortURL/delete", (req, res) => {
     error: "This URL does not belong to you. You cannot delete this URL!"
   };
   return res.render("error", templateVars);
-  // return res.send(`You cannot delete this URL`);
 });
 
 app.post("/urls/:shortURL/update", (req, res) => {
@@ -212,29 +185,32 @@ app.post("/urls/:shortURL/update", (req, res) => {
 app.post("/login", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
+  const userID = getUserByEmail(email, users);
 
-  for (const user in users) {
-    if (users[user].email === email) {
-      // if (users[user].password === password) {
-      if (bcrypt.compareSync(password, users[user].password)) {
-        req.session.userID = user;
-        return res.redirect(`/urls`);
-      } else {
-        const templateVars = {
-          user: users[req.session.userID],
-          error: "Status 403: Bad Request. Password is Incorrect!"
-        };
-        return res.status(403).render("error", templateVars);
-        // return res.status(403).send(`Status 403: Password is Incorrect`);
-      }
-    }
+  if (!email || !password) {
+    const templateVars = {
+      user: users[null],
+      error: "Status 400: Bad Request. A field is empty!"
+    };
+    return res.status(400).render("error", templateVars);
+  }
+
+  if (!userID) {
+    const templateVars = {
+      user: users[req.session.userID],
+      error: "Status 403: Bad Request. Account does not exist!"
+    };
+    return res.status(403).render("error", templateVars);
+  }
+  if (bcrypt.compareSync(password, users[userID].password)) {
+    req.session.userID = userID;
+    return res.redirect(`/urls`);
   }
   const templateVars = {
     user: users[req.session.userID],
-    error: "Status 403: Bad Request. Account does not exist!"
+    error: "Status 403: Bad Request. Password is incorrect!"
   };
   return res.status(403).render("error", templateVars);
-  // res.status(403).send(`Status 403: Account does not exist`);
 });
 
 app.post("/logout", (req, res) => {
@@ -246,25 +222,23 @@ app.post("/logout", (req, res) => {
 app.post("/register/", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
+  const userID = getUserByEmail(email, users);
 
   if (!email || !password) {
     const templateVars = {
-      // user: users[req.session.userID],
       user: users[null],
       error: "Status 400: Bad Request. A field is empty!"
     };
     return res.status(400).render("error", templateVars);
-    // return res.status(400).send(`Status 400: Bad Request. A field is empty`);
   }
 
-  for (const user in users) {
-    if (users[user].email === email) {
+  if (userID) {
+    if (users[userID].email === email) {
       const templateVars = {
-        user: users[req.session.userID],
+        user: users[null],
         error: "Status 400: Bad Request. An account with this Email already exists!"
       };
       return res.status(400).render("error", templateVars);
-      // return res.status(400).send(`Status 400: Account already exists`);
     }
   }
 
