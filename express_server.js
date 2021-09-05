@@ -44,14 +44,17 @@ app.get("/", (req, res) => {
   res.redirect(`/urls`);
 });
 
+// Prints urlDatabase in .json form
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
+// Prints usersDatabase in .json form
 app.get("/users.json", (req, res) => {
   res.json(users);
 });
 
+// Handler for Main Page/My URLs page
 app.get("/urls", (req, res) => {
   const templateVars = {
     urls: urlsForUser(req.session.userID, urlDatabase),
@@ -61,6 +64,7 @@ app.get("/urls", (req, res) => {
   res.render("urls_index", templateVars);
 });
 
+// Handler to render the Create New URL page, redirects to Login if not logged in
 app.get("/urls/new", (req, res) => {
   if (!req.session.userID) {
     return res.redirect("/login");
@@ -72,6 +76,7 @@ app.get("/urls/new", (req, res) => {
   res.render("urls_new", templateVars);
 });
 
+// Handler to direct to the new shortURL version of the page with Edit funcitonality
 app.get("/urls/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
 
@@ -84,7 +89,6 @@ app.get("/urls/:shortURL", (req, res) => {
   }
 
   if (req.session.userID !== urlDatabase[shortURL].userID) {
-    // return res.send(`You cannot edit this URL`)
     const templateVars = {
       user: users[req.session.userID],
       error: "This is not your link!  Please sign in to the proper account to access this link!"
@@ -102,25 +106,23 @@ app.get("/urls/:shortURL", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
-app.get("/hello", (req, res) => {
-  res.send("<html><body>Hello <b>World</b></body></html>\n");
-});
-
+// Handler to redirect from the associated longURL page from shortURL link
 app.get("/u/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
-  // whatever is entered into browser
+  // req.params.shortURL takes in what we entered into the field
   const longURL = urlDatabase[shortURL].longURL;
   res.redirect(longURL);
 });
 
+// Renders the New User Sign up page
 app.get("/register", (req, res) => {
   const templateVars = {
-    // userID: req.session.userID,
     user: users[req.session.userID],
   };
   res.render("registration", templateVars);
 });
 
+// Renders the Login page
 app.get("/login", (req, res) => {
   const templateVars = {
     userID: null,
@@ -129,6 +131,7 @@ app.get("/login", (req, res) => {
   res.render("login", templateVars);
 });
 
+// Error page redirector for all other pages entered
 app.get('*', function(req, res) {
   const templateVars = {
     user: users[req.session.userID],
@@ -139,8 +142,10 @@ app.get('*', function(req, res) {
 
 // POST ROUTE HANDLER
 
+// POST handler that adds new RNG shortURLs to the /urls page
 app.post("/urls", (req, res) => {
-  // when new URL receives new submission
+
+  // Redirect to login page if not logged in
   if (!req.session.userID) {
     return res.redirect('/login');
   }
@@ -155,6 +160,7 @@ app.post("/urls", (req, res) => {
   return res.redirect(`/urls/${shortURL}`);
 });
 
+// POST handler that allows the deletion of URLs
 app.post("/urls/:shortURL/delete", (req, res) => {
   const shortURL = req.params.shortURL;
   // : <- use req.params to pull out input
@@ -164,6 +170,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
     res.redirect(`/urls`);
   }
 
+  // Error handler that only allows users to delete their own URLs
   const templateVars = {
     user: users[req.session.userID],
     error: "This URL does not belong to you. You cannot delete this URL!"
@@ -171,6 +178,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   return res.render("error", templateVars);
 });
 
+// POST handler that allows the editing of pre-existing URLs
 app.post("/urls/:shortURL/update", (req, res) => {
   const shortURL = req.params.shortURL;
   // : <- use req.params to pull out input
@@ -185,7 +193,7 @@ app.post("/urls/:shortURL/update", (req, res) => {
   return res.redirect(`/urls`);
 });
 
-// Login Handler
+// POST handler for Login
 app.post("/login", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
@@ -222,7 +230,7 @@ app.post("/logout", (req, res) => {
   res.redirect(`/urls`);
 });
 
-// For Registration form data
+// POST handler for New User registration
 app.post("/register/", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
@@ -246,7 +254,9 @@ app.post("/register/", (req, res) => {
     }
   }
 
+  // ID generator for newUsers
   const ID = generateRandomString();
+  // Password Hasher
   const hashedPassword = bcrypt.hashSync(password, 10);
 
   users[ID] = {
