@@ -260,6 +260,7 @@ app.post("/register/", (req, res) => {
   const ID = generateRandomString();
   // Password Hasher
   const hashedPassword = bcrypt.hashSync(password, 10);
+  // SALT - random string that makes the password unpredictable, 10 is the encryption cost factor/Salt round
 
   users[ID] = {
     id: ID,
