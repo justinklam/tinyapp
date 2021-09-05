@@ -17,10 +17,6 @@ app.use(cookieSession({
   keys: ['key1', 'key2']
 }));
 
-// const generateRandomString = function() {
-//   return Math.floor((1 + Math.random()) * 0x100000).toString(16).substring();
-// };
-
 // FEED DATA
 const urlDatabase = {
   b6UTxQ: { longURL: "https://www.tsn.ca", userID: "userRandomID" },
@@ -131,6 +127,14 @@ app.get("/login", (req, res) => {
     user: users[req.session.userID],
   };
   res.render("login", templateVars);
+});
+
+app.get('*', function(req, res) {
+  const templateVars = {
+    user: users[req.session.userID],
+    error: "Status 404 - Page does not exist. Please click one of the links above to be redirected!"
+  };
+  return res.status(404).render("error", templateVars);
 });
 
 // POST ROUTE HANDLER
