@@ -18,13 +18,11 @@ app.use(cookieParser());
 //   keys: ['key1', 'key2']
 // }));
 
-const generateRandomString = function () {
-  return Math.floor((1 + Math.random()) * 0x100000)
-    .toString(16)
-    .substring();
+const generateRandomString = function() {
+  return Math.floor((1 + Math.random()) * 0x100000).toString(16).substring();
 };
 
-const urlsForUser = function (userID) {
+const urlsForUser = function(userID) {
   const filterURLS = {};
   for (const url in urlDatabase) {
     if (urlDatabase[url].userID === userID) {
@@ -97,7 +95,7 @@ app.get("/urls/new", (req, res) => {
 app.get("/urls/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
 
-  if(!urlDatabase[shortURL]) {
+  if (!urlDatabase[shortURL]) {
     const templateVars = {
       user: users[req.cookies["userID"]],
       error: "This URL does not exist."
@@ -182,11 +180,11 @@ app.post("/urls", (req, res) => {
 
 app.post("/urls/:shortURL/delete", (req, res) => {
   const shortURL = req.params.shortURL;
-    // : <- use req.params to pull out input
+  // : <- use req.params to pull out input
 
   if (req.cookies["userID"] === urlDatabase[shortURL].userID) {
     delete urlDatabase[shortURL];
-    res.redirect(`/urls`)
+    res.redirect(`/urls`);
   // } else {
   //   res.send('You are not authorized to delete this. Please login!')
   }
@@ -201,13 +199,13 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 
 app.post("/urls/:shortURL/update", (req, res) => {
   const shortURL = req.params.shortURL;
-    // : <- use req.params to pull out input
+  // : <- use req.params to pull out input
   if (req.cookies["userID"] !== urlDatabase[shortURL].userID) {
     const templateVars = {
       user: users[req.cookies["userID"]],
       error: "This URL does not belong to you. You cannot edit this URL!"
     };
-    return res.render("error", templateVars);  
+    return res.render("error", templateVars);
   }
   urlDatabase[shortURL].longURL = req.body.newLongURL;
   return res.redirect(`/urls`);
@@ -221,7 +219,7 @@ app.post("/login", (req, res) => {
   for (const user in users) {
     if (users[user].email === email) {
       // if (users[user].password === password) {
-      if(bcrypt.compareSync(password, users[user].password)) {
+      if (bcrypt.compareSync(password, users[user].password)) {
         res.cookie("userID", users[user].id);
         return res.redirect(`/urls`);
       } else {
@@ -229,16 +227,16 @@ app.post("/login", (req, res) => {
           user: users[req.cookies["userID"]],
           error: "Status 403: Bad Request. Password is Incorrect!"
         };
-        return res.status(403).render("error", templateVars); 
-        // return res.status(403).send(`Status 403: Password is Incorrect`); 
+        return res.status(403).render("error", templateVars);
+        // return res.status(403).send(`Status 403: Password is Incorrect`);
       }
     }
   }
-    const templateVars = {
-      user: users[req.cookies["userID"]],
-      error: "Status 403: Bad Request. Account does not exist!"
-    };
-  return res.status(403).render("error", templateVars);   
+  const templateVars = {
+    user: users[req.cookies["userID"]],
+    error: "Status 403: Bad Request. Account does not exist!"
+  };
+  return res.status(403).render("error", templateVars);
   // res.status(403).send(`Status 403: Account does not exist`);
 });
 
@@ -256,7 +254,7 @@ app.post("/register/", (req, res) => {
       user: users[req.cookies["userID"]],
       error: "Status 400: Bad Request. A field is empty!"
     };
-    return res.status(400).render("error", templateVars);  
+    return res.status(400).render("error", templateVars);
     // return res.status(400).send(`Status 400: Bad Request. A field is empty`);
   }
 
@@ -266,12 +264,12 @@ app.post("/register/", (req, res) => {
         user: users[req.cookies["userID"]],
         error: "Status 400: Bad Request. An account with this Email already exists!"
       };
-      return res.status(400).render("error", templateVars);  
+      return res.status(400).render("error", templateVars);
       // return res.status(400).send(`Status 400: Account already exists`);
     }
   }
 
-  const ID = generateRandomString();  
+  const ID = generateRandomString();
   const hashedPassword = bcrypt.hashSync(req.body.password, 10);
 
   users[ID] = {
