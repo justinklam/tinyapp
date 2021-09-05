@@ -1,9 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cookieSession = require('cookie-session');
-const { response } = require("express");
 const bcrypt = require('bcrypt');
-// const cookieParser = require("cookie-parser");
 
 // PORT
 const PORT = 8080;
@@ -17,7 +15,6 @@ app.use(cookieSession({
   name: "session",
   keys: ['key1', 'key2']
 }));
-// app.use(cookieParser());
 
 const generateRandomString = function() {
   return Math.floor((1 + Math.random()) * 0x100000).toString(16).substring();
@@ -143,7 +140,6 @@ app.get("/register", (req, res) => {
 });
 
 app.get("/login", (req, res) => {
-  // const userID = req.cookies["userID"];
   const templateVars = {
     userID: null,
     user: users[req.session.userID],
@@ -221,7 +217,6 @@ app.post("/login", (req, res) => {
     if (users[user].email === email) {
       // if (users[user].password === password) {
       if (bcrypt.compareSync(password, users[user].password)) {
-        // res.cookie("userID", users[user].id);
         req.session.userID = user;
         return res.redirect(`/urls`);
       } else {
@@ -243,7 +238,6 @@ app.post("/login", (req, res) => {
 });
 
 app.post("/logout", (req, res) => {
-  // res.clearCookie("userID");
   req.session = null;
   res.redirect(`/urls`);
 });
