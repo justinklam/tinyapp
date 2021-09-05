@@ -1,8 +1,9 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const cookieParser = require("cookie-parser");
+const cookieSession = require('cookie-session');
 const { response } = require("express");
 const bcrypt = require('bcrypt');
+const cookieParser = require("cookie-parser");
 
 // PORT
 const PORT = 8080;
@@ -12,11 +13,11 @@ const PORT = 8080;
 const app = express();
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieSession({
+  name: "session",
+  keys: ['key1', 'key2']
+}));
 app.use(cookieParser());
-// app.use(cookieSession({
-//   name: "session",
-//   keys: ['key1', 'key2']
-// }));
 
 const generateRandomString = function() {
   return Math.floor((1 + Math.random()) * 0x100000).toString(16).substring();
