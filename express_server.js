@@ -96,12 +96,25 @@ app.get("/urls/new", (req, res) => {
 
 app.get("/urls/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
-  const longURL = urlDatabase[shortURL].longURL;
 
-  if (req.cookies["userID"] !== urlDatabase[shortURL].userID) {
-    return res.send(`You cannot edit this URL`)
+  if(!urlDatabase[shortURL]) {
+    const templateVars = {
+      user: users[req.cookies["userID"]],
+      error: "This URL does not exist."
+    };
+    return res.render("error", templateVars);
   }
 
+  if (req.cookies["userID"] !== urlDatabase[shortURL].userID) {
+    // return res.send(`You cannot edit this URL`)
+    const templateVars = {
+      user: users[req.cookies["userID"]],
+      error: "This is not your link!  Please sign in to the proper account to access this link!"
+    };
+    return res.render("error", templateVars);
+  }
+
+  const longURL = urlDatabase[shortURL].longURL;
   const templateVars = {
     longURL: longURL,
     shortURL: shortURL,
@@ -139,6 +152,16 @@ app.get("/login", (req, res) => {
   res.render("login", templateVars);
 });
 
+// app.get("/error", (req, res) => {
+//   const error = req.params.error;
+
+//   const templateVars = {
+//     user: users[req.cookies["userID"]],
+//     error: error
+//   };
+//   res.render("error", templateVars);
+// });
+
 // POST ROUTE HANDLER
 
 app.post("/urls", (req, res) => {
@@ -167,14 +190,24 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   // } else {
   //   res.send('You are not authorized to delete this. Please login!')
   }
-  return res.send(`You cannot delete this URL`);
+
+  const templateVars = {
+    user: users[req.cookies["userID"]],
+    error: "This URL does not belong to you. You cannot delete this URL!"
+  };
+  return res.render("error", templateVars);
+  // return res.send(`You cannot delete this URL`);
 });
 
 app.post("/urls/:shortURL/update", (req, res) => {
   const shortURL = req.params.shortURL;
     // : <- use req.params to pull out input
   if (req.cookies["userID"] !== urlDatabase[shortURL].userID) {
-    return res.send(`You cannot edit this URL`)
+    const templateVars = {
+      user: users[req.cookies["userID"]],
+      error: "This URL does not belong to you. You cannot edit this URL!"
+    };
+    return res.render("error", templateVars);  
   }
   urlDatabase[shortURL].longURL = req.body.newLongURL;
   return res.redirect(`/urls`);
@@ -192,11 +225,21 @@ app.post("/login", (req, res) => {
         res.cookie("userID", users[user].id);
         return res.redirect(`/urls`);
       } else {
-        return res.status(403).send(`Status 403: Password is Incorrect`); 
+        const templateVars = {
+          user: users[req.cookies["userID"]],
+          error: "Status 403: Bad Request. Password is Incorrect!"
+        };
+        return res.status(403).render("error", templateVars); 
+        // return res.status(403).send(`Status 403: Password is Incorrect`); 
       }
     }
   }
-  res.status(403).send(`Status 403: Account does not exist`);
+    const templateVars = {
+      user: users[req.cookies["userID"]],
+      error: "Status 403: Bad Request. Account does not exist!"
+    };
+  return res.status(403).render("error", templateVars);   
+  // res.status(403).send(`Status 403: Account does not exist`);
 });
 
 app.post("/logout", (req, res) => {
@@ -209,12 +252,22 @@ app.post("/register/", (req, res) => {
   const email = req.body.email;
 
   if (!req.body.email || !req.body.password) {
-    return res.status(400).send(`Status 400: Bad Request. A field is empty`);
+    const templateVars = {
+      user: users[req.cookies["userID"]],
+      error: "Status 400: Bad Request. A field is empty!"
+    };
+    return res.status(400).render("error", templateVars);  
+    // return res.status(400).send(`Status 400: Bad Request. A field is empty`);
   }
 
   for (const user in users) {
     if (users[user].email === email) {
-      return res.status(400).send(`Status 400: Account already exists`);
+      const templateVars = {
+        user: users[req.cookies["userID"]],
+        error: "Status 400: Bad Request. An account with this Email already exists!"
+      };
+      return res.status(400).render("error", templateVars);  
+      // return res.status(400).send(`Status 400: Account already exists`);
     }
   }
 
