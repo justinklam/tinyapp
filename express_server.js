@@ -2,6 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const { response } = require("express");
+const bcrypt = require('bcrypt');
 
 // PORT
 const PORT = 8080;
@@ -12,6 +13,10 @@ const app = express();
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
+// app.use(cookieSession({
+//   name: "session",
+//   keys: ['key1', 'key2']
+// }));
 
 const generateRandomString = function () {
   return Math.floor((1 + Math.random()) * 0x100000)
@@ -29,7 +34,6 @@ const urlsForUser = function (userID) {
   return filterURLS;
 };
 
-
 // FEED DATA
 const urlDatabase = {
   b6UTxQ: { longURL: "https://www.tsn.ca", userID: "userRandomID" },
@@ -40,12 +44,14 @@ const users = {
   userRandomID: {
     id: "userRandomID",
     email: "user@example.com",
-    password: "123",
+    password: "$2b$10$FKz7NASf/B588iRMEbhZr.VRK2hnht96SAxRfQrDOOvEPac5UyVDe",
+    // pw = 123
   },
   user2RandomID: {
     id: "user2RandomID",
     email: "user2@example.com",
-    password: "dishwasher-funk",
+    password: "$2b$10$eZoOWWypcjzlrbm/onZVve/VmVFh0w71DefDbidt8CHan4GOlfm.2",
+    // pw = 321
   },
 };
 
@@ -64,10 +70,10 @@ app.get("/users.json", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  if (!req.cookies["userID"]) {
-    // return res.send("<html><body>Please login to access this feature!</body></html>\n");
-    // return res.redirect("/login")
-  }
+  // if (!req.cookies["userID"]) {
+  //   return res.send("<html><body>Please login to access this feature!</body></html>\n");
+  //   return res.redirect("/login")
+  // }
   
   const templateVars = {
     urls: urlsForUser(req.cookies["userID"]),
@@ -177,11 +183,12 @@ app.post("/urls/:shortURL/update", (req, res) => {
 // Login Handler
 app.post("/login", (req, res) => {
   const email = req.body.email;
-  let password = req.body.password;
+  const password = req.body.password;
 
   for (const user in users) {
     if (users[user].email === email) {
-      if (users[user].password === password) {
+      // if (users[user].password === password) {
+      if(bcrypt.compareSync(password, users[user].password)) {
         res.cookie("userID", users[user].id);
         return res.redirect(`/urls`);
       } else {
@@ -211,11 +218,13 @@ app.post("/register/", (req, res) => {
     }
   }
 
-  const ID = generateRandomString();
+  const ID = generateRandomString();  
+  const hashedPassword = bcrypt.hashSync(req.body.password, 10);
+
   users[ID] = {
     id: ID,
     email: req.body.email,
-    password: req.body.password,
+    password: hashedPassword,
   };
   res.cookie("userID", ID);
   res.redirect(`/urls`);
