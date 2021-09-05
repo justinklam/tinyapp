@@ -1,6 +1,6 @@
 const { assert } = require('chai');
 
-const { getUserByEmail } = require('../helper.js');
+const { generateRandomString, getUserByEmail, urlsForUser } = require('../helper.js');
 
 const testUsers = {
   "userRandomID": {
@@ -22,19 +22,31 @@ const testUsers = {
 
 const testUrlDatabase = {
   "b2xVn2": { longURL: "http://www.lighthouselabs.ca", userID: "userRandomID" },
-  "9sm5xK": { longURL: "http://www.google.com", userID: "user2RandomID" },
-  "Sa4H9a": { longURL: "http://www.espn.com", userID: "userRandomID" }
+  "9sm5xK": { longURL: "http://www.google.ca", userID: "user2RandomID" },
+  "Sa4H9a": { longURL: "http://www.ufc.com", userID: "userRandomID" }
 };
 
-describe('lookupUserByEmail', () => {
+describe('generateRandomString', () => {
+
+  it('should return string length of 6', function() {
+    const randomString = generateRandomString();
+    const expectedOutput = 6;
+    assert.strictEqual(randomString.length, expectedOutput);
+  });
+
+});
+
+describe('getUserByEmail', () => {
+
   it('should return a user with valid email', function() {
-    const user = lookupUserByEmail("user@example.com", testUsers);
+    const user = getUserByEmail("user@example.com", testUsers);
     const expectedOutput = "userRandomID";
     // Write your assert statement here
     assert.strictEqual(user, expectedOutput);
   });
+
   it('should return undefined with an invalid email', function() {
-    const user = lookupUserByEmail("use@example.com", testUsers);
+    const user = getUserByEmail("use@example.com", testUsers);
     // Write your assert statement here
     assert.isUndefined(user);
   });
@@ -42,28 +54,21 @@ describe('lookupUserByEmail', () => {
 });
 
 describe('urlsForUser', () => {
-  it('should return an object containing the urls that are associated with the user ID', function() {
+
+  it('should return an object containing the urls that are associated with the user ID provided', function() {
     const urls = urlsForUser("userRandomID", testUrlDatabase);
     const expectedOutput = {
       "b2xVn2": { longURL: "http://www.lighthouselabs.ca", userID: "userRandomID" },
-      "Sa4H9a": { longURL: "http://www.espn.com", userID: "userRandomID" }
+      "Sa4H9a": { longURL: "http://www.ufc.com", userID: "userRandomID" }
     };
-    // Write your assert statement here
     assert.deepInclude(urls, expectedOutput);
+    // deepInclude(haystack, needle, [message])
   });
-  it('should return an empty object with an id that has no urls attched to it', function() {
+
+  it('should return an empty object with an id - no attached URLs', function() {
     const urls = urlsForUser("newUser", testUrlDatabase);
     const expectedOutput = {};
-    // Write your assert statement here
     assert.deepInclude(urls, expectedOutput);
   });
-});
 
-describe('generateRandomString', () => {
-  it('should return string length of 6', function() {
-    const randomString = generateRandomString();
-    const expectedOutput = 6;
-    // Write your assert statement here
-    assert.strictEqual(randomString.length, expectedOutput);
-  });
 });
