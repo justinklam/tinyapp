@@ -1,14 +1,15 @@
+//------DEPENDENCIES------//
 const express = require('express');
 const bodyParser = require('body-parser');
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
 const { generateRandomString, getUserByEmail, urlsForUser } = require('./helper');
 
-// PORT
+//------PORT------//
 const PORT = 8080;
 // default port 8080
 
-// MIDDLEWARE
+//------MIDDLEWARE------//
 const app = express();
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -17,7 +18,7 @@ app.use(cookieSession({
   keys: ['key1', 'key2']
 }));
 
-// FEED DATA
+//------FEED DATA------//
 const urlDatabase = {
   b6UTxQ: { longURL: "https://www.tsn.ca", userID: "userRandomID" },
   i3BoGr: { longURL: "https://www.google.ca", userID: "user2RandomID" }
@@ -38,7 +39,7 @@ const users = {
   },
 };
 
-// GET ROUTE HANDLERS
+//------GET ROUTE HANDLERS------//
 
 app.get("/", (req, res) => {
   res.redirect(`/urls`);
@@ -140,7 +141,7 @@ app.get('*', function(req, res) {
   return res.status(404).render("error", templateVars);
 });
 
-// POST ROUTE HANDLER
+//------POST ROUTE HANDLER------//
 
 // POST handler that adds new RNG shortURLs to the /urls page
 app.post("/urls", (req, res) => {
@@ -225,6 +226,7 @@ app.post("/login", (req, res) => {
   return res.status(403).render("error", templateVars);
 });
 
+// POST handler to logout and delete cookie
 app.post("/logout", (req, res) => {
   req.session = null;
   res.redirect(`/urls`);
@@ -268,7 +270,7 @@ app.post("/register/", (req, res) => {
   res.redirect(`/urls`);
 });
 
-// PORT LISTENER
+//------PORT LISTENER------//
 
 app.listen(PORT, () => {
   console.log(`TinyApp listening on port ${PORT}!`);
