@@ -4,14 +4,19 @@ TinyApp is a full stack web application built with Node and Express that allows 
 
 ## Purpose
 
-**_BEWARE:_ This library was published for learning purposes. It is _not_ intended for use in production-grade software.**
+This project was created and published by Justin Lam (https://github.com/justinklam) as part the learning curriculum at Lighthouse Labs. 
 
-This project was created and published by Justin Lam(https://github.com/justinklam) as part the learning curriculum at Lighthouse Labs. 
+**_BEWARE:_ This project was published for learning purposes. It is _not_ intended for use in production-grade software.**
 
 ## Final Product
 
 !["screenshot description"](#)
 !["screenshot description"](#)
+!["screenshot description"](#)
+!["screenshot description"](#)
+!["screenshot description"](#)
+
+
 
 ## Dependencies
 
