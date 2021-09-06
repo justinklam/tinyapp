@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -27,13 +26,15 @@
       <tbody>
 
         <% if(Object.keys(urls).length===0 && !user) { %>
-          <div class="alert alert-info">
+          <div class="alert alert-info alert-dismissible">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
             <strong>Error!</strong> Please Register/Login and create URLs in order to see them below!
           </div>
           <% } %>
 
         <% if(Object.keys(urls).length===0 && user) { %>
-          <div class="alert alert-info">
+          <div class="alert alert-info alert-dismissible">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
             <strong>Error!</strong> Please create URLs in order to see them below!
           </div>
           <% } %>
