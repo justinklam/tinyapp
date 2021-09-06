@@ -168,7 +168,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 
   if (req.session.userID === urlDatabase[shortURL].userID) {
     delete urlDatabase[shortURL];
-    res.redirect(`/urls`);
+    return res.redirect(`/urls`);
   }
 
   // Error handler that only allows users to delete their own URLs
