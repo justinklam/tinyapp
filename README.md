@@ -36,7 +36,7 @@ This project was created and published by Justin Lam (https://github.com/justink
 ## Getting Started
 
 - Install all dependencies (using the `npm install` command).
-- Run the development web server using the `node express_server.js` command.
+- Run the development web server using the `node express_server.js` or with `npm start` command.
 
 ## File Structure
 #### [**express_server.js**](https://github.com/justinklam/tinyapp/blob/master/express_server.js): 
