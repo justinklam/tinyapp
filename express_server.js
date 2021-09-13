@@ -129,7 +129,12 @@ app.get("/login", (req, res) => {
     // userID: null,
     user: users[req.session.userID],
   };
-  res.render("login", templateVars);
+
+  if(!req.session.userID) {
+    return res.render("login", templateVars);
+  }
+
+  return res.redirect("/urls");
 });
 
 // Error page redirector for all other pages entered
@@ -208,22 +213,15 @@ app.post("/login", (req, res) => {
     return res.status(400).render("error", templateVars);
   }
 
-  if (!userID) {
+  if (!userID ||!bcrypt.compareSync(password, users[userID].password)) {
     const templateVars = {
       user: users[req.session.userID],
-      error: "Status 403: Bad Request. Account does not exist!"
+      error: "Status 403: Bad Request. Credentials are incorrect!"
     };
     return res.status(403).render("error", templateVars);
   }
-  if (bcrypt.compareSync(password, users[userID].password)) {
-    req.session.userID = userID;
-    return res.redirect(`/urls`);
-  }
-  const templateVars = {
-    user: users[req.session.userID],
-    error: "Status 403: Bad Request. Password is incorrect!"
-  };
-  return res.status(403).render("error", templateVars);
+  req.session.userID = userID;
+  return res.redirect(`/urls`);
 });
 
 // POST handler to logout and delete cookie
