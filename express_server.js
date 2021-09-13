@@ -126,7 +126,7 @@ app.get("/register", (req, res) => {
 // Renders the Login page
 app.get("/login", (req, res) => {
   const templateVars = {
-    userID: null,
+    // userID: null,
     user: users[req.session.userID],
   };
   res.render("login", templateVars);
@@ -202,7 +202,7 @@ app.post("/login", (req, res) => {
 
   if (!email || !password) {
     const templateVars = {
-      user: users[null],
+      user: null,
       error: "Status 400: Bad Request. A field is empty!"
     };
     return res.status(400).render("error", templateVars);
