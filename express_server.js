@@ -196,8 +196,6 @@ app.put("/urls/:shortURL/update", (req, res) => {
 
   // View counter
   req.session.views = (req.session.views || 0) + 1
-  // Write response
-  res.end(req.session.views + ' views')
 
   if (req.session.userID !== urlDatabase[shortURL].userID) {
     const templateVars = {
@@ -207,6 +205,9 @@ app.put("/urls/:shortURL/update", (req, res) => {
     return res.render("error", templateVars);
   }
   urlDatabase[shortURL].longURL = req.body.newLongURL;
+
+  // Write response for Views
+  res.end(req.session.views + ' views');
   return res.redirect(`/urls`);
 });
 
