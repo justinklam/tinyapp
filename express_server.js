@@ -18,7 +18,7 @@ app.use(cookieSession({
   name: "session",
   keys: ['key1', 'key2']
 }));
-app.use(methodOverride('X-HTTP-Method-Override'))
+app.use(methodOverride('_method'))
 
 //------FEED DATA------//
 const urlDatabase = {
@@ -168,8 +168,9 @@ app.post("/urls", (req, res) => {
   return res.redirect(`/urls/${shortURL}`);
 });
 
-// POST handler that allows the deletion of URLs
-app.post("/urls/:shortURL/delete", (req, res) => {
+// DELETE handler using method override that allows the deletion of URLs
+app.delete("/urls/:shortURL", (req, res) => {
+
   const shortURL = req.params.shortURL;
   // : <- use req.params to pull out input
 
@@ -186,8 +187,8 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   return res.render("error", templateVars);
 });
 
-// POST handler that allows the editing of pre-existing URLs
-app.post("/urls/:shortURL/update", (req, res) => {
+// PUT handler using method override that allows the editing of pre-existing URLs
+app.put("/urls/:shortURL/update", (req, res) => {
   const shortURL = req.params.shortURL;
   // : <- use req.params to pull out input
   if (req.session.userID !== urlDatabase[shortURL].userID) {
@@ -274,5 +275,5 @@ app.post("/register/", (req, res) => {
 //------PORT LISTENER------//
 
 app.listen(PORT, () => {
-  console.log(`TinyApp is listening on port ${PORT}!`);
+  console.log(`TinyApp is listening on port ${PORT}! 😼`);
 });
