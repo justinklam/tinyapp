@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
 const { generateRandomString, getUserByEmail, urlsForUser } = require('./helper');
+const methodOverride = require('method-override')
 
 //------PORT------//
 const PORT = 8080;
@@ -17,6 +18,7 @@ app.use(cookieSession({
   name: "session",
   keys: ['key1', 'key2']
 }));
+app.use(methodOverride('X-HTTP-Method-Override'))
 
 //------FEED DATA------//
 const urlDatabase = {
