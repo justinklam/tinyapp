@@ -18,7 +18,9 @@ app.use(cookieSession({
   name: "session",
   keys: ['key1', 'key2']
 }));
-app.use(methodOverride('_method'))
+app.use(methodOverride('_method'));
+// trust first proxy
+app.set('trust proxy', 1);
 
 //------FEED DATA------//
 const urlDatabase = {
@@ -191,6 +193,12 @@ app.delete("/urls/:shortURL", (req, res) => {
 app.put("/urls/:shortURL/update", (req, res) => {
   const shortURL = req.params.shortURL;
   // : <- use req.params to pull out input
+
+  // View counter
+  req.session.views = (req.session.views || 0) + 1
+  // Write response
+  res.end(req.session.views + ' views')
+
   if (req.session.userID !== urlDatabase[shortURL].userID) {
     const templateVars = {
       user: users[req.session.userID],
