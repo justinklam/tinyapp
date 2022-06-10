@@ -3,8 +3,10 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
-const { generateRandomString, getUserByEmail, urlsForUser } = require('./helper');
 const methodOverride = require('method-override')
+
+//------HELPER FUNCTIONS------//
+const { generateRandomString, getUserByEmail, urlsForUser } = require('./helper');
 
 //------PORT------//
 const PORT = 8080;
