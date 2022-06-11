@@ -33,13 +33,13 @@ const urlDatabase = {
 const users = {
   userRandomID: {
     id: "userRandomID",
-    email: "user@example.com",
+    email: "user1@mail.com",
     password: "$2b$10$FKz7NASf/B588iRMEbhZr.VRK2hnht96SAxRfQrDOOvEPac5UyVDe",
     // pw = 123
   },
   user2RandomID: {
     id: "user2RandomID",
-    email: "user2@example.com",
+    email: "user2@mail.com",
     password: "$2b$10$eZoOWWypcjzlrbm/onZVve/VmVFh0w71DefDbidt8CHan4GOlfm.2",
     // pw = 321
   },
