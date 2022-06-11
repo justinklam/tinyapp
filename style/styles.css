@@ -1,6 +1,6 @@
 /* Custom Styles */
 
-body{
+.body{
   width: 100%;
   height: 100vh;
   color: #fff;
@@ -8,10 +8,10 @@ body{
   /* background: linear-gradient(-45deg, #EE7752, #E73C7E, #23A6D5, #23D5AB); */
   background-size: 400% 400%;
   position: relative;
-  animation: change 5s ease-in-out infinite;
+  /* animation: change 5s ease-in-out infinite; */
 }
 
-@keyframes change {
+/* @keyframes change {
   0%{
     background-position: 0 50%;
   }
@@ -21,4 +21,4 @@ body{
   100%{
     background-position: 0% 50%;
   }
-}
+} */
